@@ -95,52 +95,6 @@ __global__ void k_cubicanisotropyField(CuField hField,
 }
 
 
-// Field evalAnisotropyField(const Ferromagnet* magnet) {
-
-//   Field result(magnet->system(), 3);
-  
-//   if (anisotropyAssuredZero(magnet)) {
-//     result.makeZero();
-//     return result;
-//   }
-
-//   CuField h = result.cu();
-//   const CuField m = magnet->magnetization()->field().cu();
-//   auto msat = magnet->msat.cu();
-//   int ncells = magnet->grid().ncells();
-
-
-//   if (!unianisotropyAssuredZero(magnet)) {
-//       Field h_uni(magnet->system(), 3);
-//       CuField h_uni_cu = h_uni.cu();
-//       auto anisU = magnet->anisU.cu();
-//       auto ku1 = magnet->ku1.cu();
-//       auto ku2 = magnet->ku2.cu();
-//       cudaLaunch(ncells, k_unianisotropyField, h_uni_cu, m, anisU, ku1, ku2, msat);
-//       cudaDeviceSynchronize();
-      
-//       // Суммируем поля
-//       result += h_uni;
-//   }
-  
-//   if(!cubicanisotropyAssuredZero(magnet)) {
-//       Field h_cubic(magnet->system(), 3); 
-//       CuField h_cubic_cu = h_cubic.cu();
-//       auto anisC1 = magnet->anisC1.cu();
-//       auto anisC2 = magnet->anisC2.cu();
-//       auto kc1 = magnet->kc1.cu();
-//       auto kc2 = magnet->kc2.cu();
-//       auto kc3 = magnet->kc3.cu();
-//       cudaLaunch(ncells, k_cubicanisotropyField, h_cubic_cu, m, anisC1, anisC2, kc1, kc2, kc3, msat);
-//       cudaDeviceSynchronize();
-      
-//       // Суммируем поля
-//       result += h_cubic;
-//   }
-
-//   return result;
-// }
-
 Field evalAnisotropyField(const Ferromagnet* magnet) {
   Field result(magnet->system(), 3);
   result.makeZero();
@@ -243,46 +197,6 @@ __global__ void k_cubanisotropyEnergyDensity(CuField edens,
   edens.setValueInCell(idx, 0, e_existing + e_contrib);
 }
 
-// Field evalAnisotropyEnergyDensity(const Ferromagnet* magnet) {
-
-//   Field edens(magnet->system(), 1);
-
-//   if (anisotropyAssuredZero(magnet)) {
-//     edens.makeZero();
-//     return edens;
-//   }
-
-//   CuField e = edens.cu();
-
-//   const CuField m = magnet->magnetization()->field().cu();
-//   auto msat = magnet->msat.cu();
-//   int ncells = magnet->grid().ncells();
-
-//   if(!unianisotropyAssuredZero(magnet)) {
-//       CuField e_uni_cu = e_uni.cu();
-//       auto anisU = magnet->anisU.cu();
-//       auto ku1 = magnet->ku1.cu();
-//       auto ku2 = magnet->ku2.cu();
-//       cudaLaunch(ncells, k_unianisotropyEnergyDensity, e_uni_cu, m, anisU, ku1, ku2, msat);
-//       cudaDeviceSynchronize();
-//   }
-  
-//   if(!cubicanisotropyAssuredZero(magnet)) {
-//       CuField e_cubic_cu = e_cubic.cu();
-//       auto anisC1 = magnet->anisC1.cu();
-//       auto anisC2 = magnet->anisC2.cu();
-//       auto kc1 = magnet->kc1.cu();
-//       auto kc2 = magnet->kc2.cu();
-//       auto kc3 = magnet->kc3.cu();
-//       cudaLaunch(ncells, k_cubanisotropyEnergyDensity, e_cubic_cu, m, anisC1, anisC2, kc1, kc2, kc3, msat);
-//       cudaDeviceSynchronize();
-//   }
-  
-//   // Суммируем энергии
-//   edens = e_uni + e_cubic;
-  
-//   return edens;
-// }
 
 Field evalAnisotropyEnergyDensity(const Ferromagnet* magnet) {
 
@@ -313,7 +227,6 @@ Field evalAnisotropyEnergyDensity(const Ferromagnet* magnet) {
       auto kc2 = magnet->kc2.cu();
       auto kc3 = magnet->kc3.cu();
       cudaLaunch(ncells, k_cubanisotropyEnergyDensity, e, m, anisC1, anisC2, kc1, kc2, kc3, msat);
-      cudaDeviceSynchronize();
   }
   
   return edens;
